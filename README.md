@@ -1,4 +1,4 @@
-#  Task 4 - Very Large Image Blur using OpenMPI
+#  Very Large Image Blur using OpenMPI
 
 ##  Overview
 This project implements a high-performance parallel image blurring system designed to process very large-scale images (up to 10,000 × 10,000 pixels). The system leverages C++ with OpenMPI to distribute computation efficiently across a Docker-based multi-node cluster.
@@ -60,49 +60,64 @@ ip route add 172.25.0.0/24 via <Master_IP>
 
 ---
 
-##  Execution
+## Execution
 
+```bash
 mpirun -np 5 \
---mca btl tcp,self \
---mca btl_tcp_if_exclude lo,docker0 \
---mca btl_tcp_skip_reachable_check 1 \
---mca routed direct \
---hostfile hostfile.txt \
-./blur_program
+  --mca btl tcp,self \
+  --mca btl_tcp_if_exclude lo,docker0 \
+  --mca btl_tcp_skip_reachable_check 1 \
+  --mca routed direct \
+  --hostfile hostfile.txt \
+  ./blur_program
+```
+
+For detailed setup and execution steps, please refer to the `run_instructions` file included in the project.
 
 ---
 
-##  Automation
+## Automation
 
-Script: run_all.sh
+Script: `run_all.sh`
 
-Outputs:
-blurred_input_1.jpg
-blurred_input_2.jpg
+This bash script runs experiments on 5 images using mirror mode with a kernel size of 25.  
+It also generates a performance report based on execution over the network.
+
+
 
 ---
 ##  Performance Report
 
 The following report shows execution times for each processed image along with the grand average:
 
-![Performance Report]()
+![Performance Report](https://github.com/AyaaMohammedsayed/Image-Bluring-Assignment-2-HPC./blob/main/performance%20report.jpg)
 
 
 ---
 
-## 🖼️ Visuals
+##  Visuals
+The displayed image presents a comparison between the input and the output after applying the mirror mode kernel (size 25)
 
-- Input Image
-- Output Image
-- Report Screenshot
+![Performance Report](https://github.com/AyaaMohammedsayed/Image-Bluring-Assignment-2-HPC./blob/main/comparison.jpg)
+
+
+---
+##  Project Supervision & Team
+
+### Supervision
+- Dr. Sabah  
+- Eng. Mohamed Abdel-Majeed (Teaching Assistant)
+
+### Development Team
+
+| Name           | Section | Bench No. |
+|----------------|---------|-----------|
+| Aya Mohamed    | 1       | 4         |
+| Hanin Mustafa  | 1       | 8         |
+| Nadia Kamel    | 2       | 36        |
 
 ---
 
-##  Team
-- Hanin Mustafa
-- Aya Mohamed
-- Nadia Kamel
-
-### Supervisors
-- Dr. Sabah
-- Eng. Mohamed Abdulmaged
+**Department:** Computer Engineering  
+**Project:** Senior Graduation Project 2026
+Eng. Mohamed Abdel-Majeed (Teaching Assistant)
