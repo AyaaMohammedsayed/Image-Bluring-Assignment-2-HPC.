@@ -1,10 +1,7 @@
-# 1. Base Image
 FROM ubuntu:22.04
 
-# 2. Set environment variables to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 3. Install dependencies: MPI, C++, OpenCV, and its runtime libraries
 RUN apt-get update && apt-get install -y \
     build-essential \
     openmpi-bin openmpi-common libopenmpi-dev \
@@ -14,18 +11,20 @@ RUN apt-get update && apt-get install -y \
     python3-opencv \
     pkg-config \
     libavcodec-dev libavformat-dev libswscale-dev \
+    openssh-server openssh-client \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 4. Create App directory
+RUN mkdir /var/run/sshd && \
+    echo 'root:password' | chpasswd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    mkdir -p /root/.ssh && \
+    ssh-keygen -t rsa -f /root/.ssh/id_rsa -N "" && \
+    cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys && \
+    chmod 600 /root/.ssh/authorized_keys
+
 WORKDIR /app
-
-# 5. Copy the code
 COPY . .
+RUN mkdir build && cd build && cmake .. && make
 
-# 6. Build the project using CMake (the best way for OpenCV)
-RUN mkdir build && cd build && \
-    cmake .. && \
-    make
-
-# 7. Run Command (NP is usually size of processes)
-CMD ["mpirun", "--allow-run-as-root", "-np", "4", "./build/mpi_cv_blur"]
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]

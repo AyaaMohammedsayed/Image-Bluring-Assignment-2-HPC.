@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  master:
+    build: 
+      context: .
+      dockerfile: ./docker/Dockerfile
+    container_name: mpi-master
+    privileged: true
+    volumes:
+      - .:/app
+    sysctls:
+      - net.ipv4.ip_forward=1
+    networks:
+      mpi_net_1:
+        ipv4_address: 172.25.0.2
+      mpi_net_2:
+        ipv4_address: 172.26.0.2
+
+  worker1:
+    build: { context: ., dockerfile: ./docker/Dockerfile }
+    container_name: mpi-worker1
+    privileged: true
+    volumes: [".:/app"]
+    networks:
+      mpi_net_1:
+        ipv4_address: 172.25.0.3
+
+  worker2:
+    build: { context: ., dockerfile: ./docker/Dockerfile }
+    container_name: mpi-worker2
+    privileged: true
+    volumes: [".:/app"]
+    networks:
+      mpi_net_1:
+        ipv4_address: 172.25.0.4
+
+  worker3:
+    build: { context: ., dockerfile: ./docker/Dockerfile }
+    container_name: mpi-worker3
+    privileged: true
+    volumes: [".:/app"]
+    networks:
+      mpi_net_2:
+        ipv4_address: 172.26.0.5
+
+  worker4:
+    build: { context: ., dockerfile: ./docker/Dockerfile }
+    container_name: mpi-worker4
+    privileged: true
+    volumes: [".:/app"]
+    networks:
+      mpi_net_2:
+        ipv4_address: 172.26.0.6
+
+networks:
+  mpi_net_1:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/24
+  mpi_net_2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.26.0.0/24

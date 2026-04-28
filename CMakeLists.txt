@@ -15,6 +15,7 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 # The executable and its sources
 add_executable(mpi_cv_blur 
     src/main.cpp 
+    src/cli.cpp
     src/data_manager.cpp 
     src/mpi_manager.cpp 
     src/blur_processor.cpp

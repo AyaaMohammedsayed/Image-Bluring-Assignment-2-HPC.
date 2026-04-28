@@ -1,0 +1,27 @@
+docker-compose up -d 
+docker exec -it mpi-worker1 ip route add 172.26.0.0/24 via 172.25.0.2
+docker exec -it mpi-worker2 ip route add 172.26.0.0/24 via 172.25.0.2
+docker exec -it mpi-worker3 ip route add 172.25.0.0/24 via 172.26.0.2
+docker exec -it mpi-worker4 ip route add 172.25.0.0/24 via 172.26.0.2
+
+docker exec -it mpi-master bash
+ssh worker1 hostname && ssh worker3 hostname
+docker-compose restart
+
+
+mpirun --allow-run-as-root --quiet\
+    --hostfile /app/hostfile \
+    --mca btl tcp,self \
+    --mca btl_tcp_if_exclude lo,docker0 \
+    --mca oob_tcp_if_exclude lo,docker0 \
+    --mca btl_tcp_skip_reachable_check 1 \
+    --mca btl_tcp_check_ifaddr 0 \
+    --mca btl_tcp_port_min 1024 \
+    --mca btl_tcp_port_range 100 \
+    -np 10 \
+    ./build/mpi_cv_blur --image /app/images/input_1.jpg --kernel 5 --mode mirror
+
+chmod +x build/run_all.sh
+./build/run_all.sh
+
+

@@ -1,0 +1,7 @@
+master slots=4
+
+worker1 slots=4
+worker2 slots=4
+
+worker3 slots=4
+worker4 slots=4
